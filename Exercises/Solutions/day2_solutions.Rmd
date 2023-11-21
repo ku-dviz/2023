@@ -1,0 +1,347 @@
+---
+title: "Day 2: Heatmaps and small multiples"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = "C:/KU/Teaching/DataVizCourse/dev/html"
+    )
+  })
+---
+
+# Potentially useful libraries and starter code
+```{r, message = FALSE, warning = FALSE}
+library(corrplot)
+library(dplyr)
+library(GGally) # to make pair plots
+library(ggplot2)
+library(pheatmap) # a cool heatmap library
+library(RColorBrewer)
+library(tidyr)
+library(tidyverse)
+
+# European Quality of Life Dataset
+qol <- read.csv("../data/eqls_2007and2011_with_labels.csv")
+# Cardiovascular data
+cardio_train <- read.csv("../data/cardio_train.csv", sep=";")
+```
+
+# Exercise 1: Exploratory data analysis on a cardiovascular training dataset
+Here is a brief summary of the dataset:
+
+ - age: in days
+ - height: in cm
+ - weight: in kg
+ - gender (should be referred as sex): 1 = woman, 2 = man
+ - cholesterol: 1 = normal, 2 = above normal, 3 = well above normal
+ - glucose: 1 = normal, 2 = above normal, 3 = well above normal
+ - alcohol intake: 0 = does not drink, 1 = drinks (self-reported)
+ - smoking: 0 = does not smoke cigarettes, 1 = smokes (self-reported)
+ - physical activity: 0 = < 1 hour of physical activity per day, 1 = >= 1 hours (self-reported)
+ - cardio: 0 = no cardiovascular disease, 1 = diagnosed with CV disease
+
+1. Print all the column names in the dataset
+
+```{r, message = FALSE, warning = FALSE}
+# Print the column headers
+column_headers <- colnames(cardio_train)
+print(column_headers)
+```
+
+
+2. Add another column called age_yrs which has the ages in years (float values)
+
+```{r, message = FALSE, warning = FALSE}
+# Convert age from days to years
+cardio_train$age_yrs <- cardio_train$age / 365.25
+
+head(cardio_train)
+```
+
+4. Do you see any null values? Are there any zeros in the age_yrs, gender*, height, weight, sys_bp, di_bp columns?
+
+```{r, message = FALSE, warning = FALSE}
+# Filter NA values
+cardio_train <- na.omit(cardio_train)
+
+# Remove rows with abnormal zeros
+cardio_train <- cardio_train %>%
+  filter(age_yrs != 0, gender != 0, height != 0, weight != 0, sys_bp != 0, di_bp != 0)
+```
+
+5. Examine carefully the columns sys_bp, di_bp, weight, height, and age_yrs, cholesterol. 
+```{r, message = FALSE, warning = FALSE}
+#     Make a plot for each distribution.
+# Create a histogram for the 'weight' column
+ggplot(cardio_train, aes(x = weight)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Weight",
+       x = "Weight",
+       y = "Frequency")
+
+
+# Create a histogram for the 'height' column
+ggplot(cardio_train, aes(x = height)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Height",
+       x = "Height",
+       y = "Frequency")
+
+# Create a histogram for the 'sys_bp' column
+ggplot(cardio_train, aes(x = sys_bp)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of sys_bp",
+       x = "sys_bp",
+       y = "Frequency")
+
+# Create a histogram for the 'di_bp' column
+ggplot(cardio_train, aes(x = di_bp)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of di_bp",
+       x = "di_bp",
+       y = "Frequency")      
+
+# Create a histogram for the 'age_yrs' column
+ggplot(cardio_train, aes(x = age_yrs)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of age_yrs",
+       x = "age_yrs",
+       y = "Frequency")      
+
+# Create a histogram for the 'cholesterol' column
+ggplot(cardio_train, aes(x = cholesterol)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of cholesterol",
+       x = "cholesterol",
+       y = "Frequency")
+```
+
+
+6. Do you see any obvious outliers in these columns? Remove them. 
+
+```{r, message = FALSE, warning = FALSE}
+# Create a boxplot for the 'height' column
+ggplot(cardio_train, aes(x = factor(1), y = height)) +
+  geom_boxplot(fill = "skyblue", outlier.shape = NA) +
+  labs(title = "Boxplot of Height", x = NULL, y = "Height") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+
+cardio_train <- cardio_train[cardio_train$age >= 15, , drop = FALSE]
+cardio_train <- cardio_train[cardio_train$weight >= 35, , drop = FALSE]
+cardio_train <- cardio_train[cardio_train$height >= 100, , drop = FALSE]
+cardio_train <- cardio_train[cardio_train$sys_bp <= 240, , drop = FALSE]
+cardio_train <- cardio_train[cardio_train$sys_bp >= 40, , drop = FALSE]
+cardio_train <- cardio_train[cardio_train$di_bp <= 200, , drop = FALSE]
+cardio_train <- cardio_train[cardio_train$di_bp >= 40, , drop = FALSE]
+
+# Create a boxplot for the 'height' column
+ggplot(cardio_train, aes(x = factor(1), y = height)) +
+  geom_boxplot(fill = "skyblue", outlier.shape = NA) +
+  labs(title = "Boxplot of Height", x = NULL, y = "Height") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+
+```
+
+7. Explore the relationships between age, height, weight, cholesterol, and glucose levels.Which plots are useful? Which are not?
+
+```{r, message = FALSE, warning = FALSE}
+# Select the columns you want to include in the pair plot
+subset_data <- cardio_train[, c("age_yrs", "sys_bp", "di_bp", "cholesterol")]
+
+# Create the pair plot
+pairs(subset_data, main = "Pair Plot of age_yrs, sys_bp, di_bp, cholesterol, gluc")
+
+# With ggplot2
+points <- ggplot(cardio_train, aes(x = gender, y = sys_bp, color = factor(cholesterol))) +
+  geom_point() +
+  labs(title = "Pair Plot",
+       x = "Sex",
+       y = "Systolic Blood Pressure",
+       color = "Cholesterol") +
+  theme_minimal()
+points
+ggplot(cardio_train, aes(x = age_yrs, y = sys_bp, color = factor(cholesterol))) +
+  geom_point() +
+  labs(title = "Pair Plot",
+       x = "Age",
+       y = "Systolic Blood Pressure",
+       color = "Cholesterol") +
+  theme_minimal()
+
+# With ggplot2
+ggplot(cardio_train, aes(x = gender, y = weight, color = factor(cholesterol))) +
+  geom_point() +
+  labs(title = "Pair Plot",
+       x = "Sex",
+       y = "Weight",
+       color = "Cholesterol") +
+  theme_minimal()
+
+ggplot(cardio_train, aes(x = age_yrs, y = weight, color = factor(cholesterol))) +
+  geom_point() +
+  labs(title = "Pair Plot",
+       x = "Age",
+       y = "Weight",
+       color = "Glucose") +
+  theme_minimal()
+```
+
+8. Explore the relationships between sex , cholesterol, glucose levels, smoking, alcohol, lifesyle and cardiovascular disease.
+
+```{r, message = FALSE, warning = FALSE}
+# Reshape the data into long format
+cardio_train_long <- gather(cardio_train, key = "variable", value = "value", cholesterol, gluc, smoke, alco, active)
+
+# Create the plot using ggplot2
+ggplot(cardio_train_long, aes(x = variable, fill = factor(value))) +
+  geom_bar(position = "dodge") +
+  facet_grid(.~cardio) +
+  labs(title = "Count of Categorical Variables by Cardio Status",
+       x = "Variable",
+       y = "Count") +
+  scale_fill_manual(values = c("0" = "blue", "1" = "red")) +
+  theme_minimal()  
+```
+
+9. Explore the relationships between cholesterol, glucose, smoking, alcohol and cardiovascular disease individually.
+```{r, message = FALSE, warning = FALSE}
+subset_data <- cardio_train[, c('cholesterol', 'gluc', 'smoke', 'alco', 'cardio')]
+corr_matrix <- cor(cardio_train)
+corrplot(corr_matrix, method = "color", type = "upper", order = "hclust", tl.cex = 0.7, col = colorRampPalette(c("white", "blue"))(50))
+
+# Plot correlation heatmap
+data_melted <- reshape2::melt(corr_matrix)
+ggplot(data_melted, aes(Var1, Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "blue") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+```
+
+10. Bonus: Violin plot
+```{r, message = FALSE, warning = FALSE}
+# Create a violin plot for height distribution across gender
+ggplot(cardio_train, aes(x = factor(gender), y = height, fill = factor(gender))) +
+  geom_violin(trim = FALSE) +
+  scale_fill_manual(values = c("1" = "skyblue", "2" = "salmon")) +
+  labs(title = "Violin Plot of Height Distribution by Gender",
+       x = "Gender (1: Male, 2: Female)",
+       y = "Height") +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+# Exercise 2: small multiples
+In this exercise we will analyse mental wellbeing in the different European countries.
+
+The index has range 0-100.
+
+To do so, we will look at differences in distribution between countries.
+
+Let's start with a simple plot with one density distribution plot for each country.
+
+```{r, message = FALSE, warning = FALSE}
+# Density distribution plot
+ggplot(data = qol, aes(x = who5_mental_wellbeing_index, group = country_name, color = country_name)) +
+  geom_density()
+```
+
+You will notice that it is not so easy to perceive differences between countries from this plot.
+
+To solve that issue, let's do small multiples for each country!
+
+You might need to put in extra work to adjust each panel, e.g., by putting a different colour for each panel
+
+```{r, message = FALSE, warning = FALSE}
+# Extend palette to more colours
+palette <- brewer.pal(8L, "Dark2")
+big_palette <- colorRampPalette(palette)(length(unique(qol$country_name)))
+
+ggplot(data = qol, aes(x = who5_mental_wellbeing_index, color = country_name)) +
+  geom_density() + # Density
+  facet_wrap(~country_name) +
+  theme_classic() +
+  theme(
+    panel.grid.major = element_line(color = "gray", linetype = "dotted"), # Grid
+    axis.text.x = element_text(size = 10L), # Font size x axis
+    axis.text.y = element_text(size = 10L), # Font size y axis
+    legend.position = "topleft", # Legend position
+    strip.background = element_blank(), # Remove borders from title
+    panel.margin = unit(0.33, "cm") # Increase margin between subplots
+  ) +
+  labs(
+    x = "Mental wellbeing index [0-100]", # Rename x label
+    y = "Density" # Rename y label
+  ) +
+  scale_color_manual(values = big_palette) # Add color bar and palette
+```
+
+
+# Exercise 3: heatmaps
+In this exercise we will analyse whether there are different patterns in Internet usage.
+
+Select all the columns referring to the Internet (i.e., containing the keyword "internet"), and plot a heatmap to visualise potential differences between countries.
+
+Save the final figure as pcardio_train. You can now use it for various reports or papers (e.g., using Overleaf!).
+
+```{r, message = FALSE, warning = FALSE}
+# Select columns with "internet" or starting with "country_name"
+selected_columns <- qol %>%
+  select(matches("internet|^country_name"))
+
+# Drop rows with missing values and calculate the mean by country_name
+summary <- selected_columns %>%
+  drop_na() %>%
+  group_by(country_name) %>%
+  summarise(across(everything(), mean))
+
+# Rename columns
+summary <- summary %>%
+  rename_with(
+    ~ gsub("phone_internet_contact_with_", "", .), # Remove "phone_internet_contact_with" from column names
+    everything()
+  ) %>%
+  rename(
+    # rename the column "how_frequently_use_the_internet_other_than_for_work"
+    other_than_work = how_frequently_use_the_internet_other_than_for_work
+  )
+
+head(summary)
+
+# Matrix without the first column (country_name)
+heatmap_matrix <- as.matrix(summary[, -1L])
+
+# Define row and column names
+rownames(heatmap_matrix) <- summary$country_name
+colnames(heatmap_matrix) <- colnames(heatmap_matrix)
+
+# Order rows alphabetically
+ordered_rows <- rownames(heatmap_matrix)[order(rownames(heatmap_matrix))]
+
+# Reorder the rows of the heatmap_matrix
+heatmap_matrix_ordered <- heatmap_matrix[rev(ordered_rows), ]
+
+head(heatmap_matrix_ordered)
+
+# Number of colours (high value so we get something approximately continuous)
+n_colors <- 100L
+
+# Max and min of the color bar
+vmin <- 1L
+vmax <- 6L
+
+# Heatmap saved as pcardio_train
+pheatmap(
+  heatmap_matrix_ordered,
+  angle_col = 45L, # Angle for column ticks
+  treeheight_row = 0L, # Remove dendrogram
+  treeheight_col = 0L, # Remove dendrogram
+  col = colorRampPalette(c("#c13639", "white", "#2f79b5"))(n_colors),
+  breaks = seq(vmin, vmax, length.out = n_colors + 1L),
+  filename = "../img/heatmap_day2.pdf" # Save as Pcardio_train
+)
+```
+
+

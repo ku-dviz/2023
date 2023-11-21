@@ -1,0 +1,94 @@
+---
+title: "Day 2: Heatmaps and small multiples"
+output: html_document
+---
+
+# Potentially useful libraries and starter code
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(RColorBrewer)
+library(tidyr)
+
+# European Quality of Life Dataset
+qol <- read.csv("../data/eqls_2007and2011_with_labels.csv")
+# Cardiovascular data
+cardio_train <- ("../data/cardio_train.csv")
+```
+
+# Exercise 1: Exploratory data analysis on a cardiovascular training dataset
+Here is a brief summary of the dataset:
+
+ - age: in days
+ - height: in cm
+ - weight: in kg
+ - gender (should be referred as sex): 1 = woman, 2 = man
+ - cholesterol: 1 = normal, 2 = above normal, 3 = well above normal
+ - glucose: 1 = normal, 2 = above normal, 3 = well above normal
+ - alcohol intake: 0 = does not drink, 1 = drinks (self-reported)
+ - smoking: 0 = does not smoke cigarettes, 1 = smokes (self-reported)
+ - physical activity: 0 = < 1 hour of physical activity per day, 1 = >= 1 hours (self-reported)
+ - cardio: 0 = no cardiovascular disease, 1 = diagnosed with CV disease
+
+1. Print all the column names in the dataset
+
+2. The dataset should contain a column "age" representing age in days. Add a column "age_yrs" which contains the age in years (as a float/decimal value)
+
+3. Now that you have the data, what would be the first step you would do? Write in brief your thinking of methodology.
+
+4. Do you see any null values? Are there any zeros in the age_yrs, gender*, height, weight, sys_bp, di_dp columns? If you find any, remove those rows.
+
+5. Examine carefully the columns sys_bp, di_dp, weight, height, and age_yrs, cholesterol. Plot the distribution of each column in a separate plot. What do you see? Which distributions are continuous? Which ones are discrete? Do you examine any skewness in the distributions? 
+
+6. Do you see any obvious outliers in these columns? Remove them. Which plot was the most useful to remove outliers?
+
+7. Explore the relationships between age, height, weight, cholesterol, and glucose levels. Which plots are useful? Which are not?
+
+8. Explore the relationships between sex, cholesterol, glucose levels, smoking, alcohol, lifesyle and cardiovascular disease. 
+
+9. Explore the relationships between cholesterol, glucose, smoking, alcohol and cardiovascular disease individually.
+
+10. Bonus: a violin plot showing the distribution of any variable with respect to sex
+
+
+```{r, message = FALSE, warning = FALSE}
+# Your code here!
+```
+
+# Exercise 2: small multiples
+In this exercise we will analyse mental wellbeing in the different European countries.
+
+The index has range 0-100.
+
+To do so, we will look at differences in distribution between countries.
+
+Let's start with a simple plot with one density distribution plot for each country.
+
+```{r, message = FALSE, warning = FALSE}
+# Your code here!
+```
+
+You will notice that it is not so easy to perceive differences between countries from this plot.
+
+To solve that issue, let's do small multiples for each country!
+
+You might need to put in extra work to adjust each panel, e.g., by putting a different colour for each panel
+
+```{r, message = FALSE, warning = FALSE}
+# Your code here!
+```
+
+
+# Exercise 3: heatmaps
+
+In this exercise we will analyse whether there are different patterns in Internet usage.
+
+Select all the columns referring to the Internet (i.e., containing the keyword "internet"), and plot a heatmap to visualise potential differences between countries.
+
+Save the final figure as pdf. You can now use it for various reports or papers (e.g., using Overleaf!).
+```{r, message = FALSE, warning = FALSE}
+# Your code here!
+```
+
+

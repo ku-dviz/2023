@@ -1,0 +1,120 @@
+---
+title: "Day 3: Networks and maps"
+output: html_document
+---
+
+# Potentially useful libraries and starter code
+```{r, message = FALSE, warning = FALSE}
+# install.packages("devtools")
+# devtools::install_github("ropensci/rnaturalearthhires")
+
+library(ggplot2) # general purpose plotting
+library(ggspatial) # scale bars and north arrows
+library(rnaturalearth) # map data
+library(rnaturalearthdata)# map data
+# library(rnaturalearthhires)# map data 
+library(sf) #'simple features' package
+library(tmap) # interactive map
+```
+
+# Execise 1: plot the world
+
+Use the rnaturalearth and ggplot2 libraries to get the country outlines on a world map
+
+```{r, message = FALSE, warning = FALSE}
+# ////////////////////////////////////////////////////////////
+#                      YOUR CODE HERE
+# ///////////////////////////////////////////////////////////
+```
+
+# Exercise 2: plot countries and continents
+
+Do 4 different plots for the maps of:
+ * 1. Kenya
+ * 2. Denmark
+ * 3. Europe
+ * 4. Asia
+
+```{r, message = FALSE, warning = FALSE}
+# ////////////////////////////////////////////////////////////
+#                      YOUR CODE HERE
+# ///////////////////////////////////////////////////////////
+```
+ 
+ # Exercise 3: adding details
+ For the Kenya map, add:
+  * the scale
+  * the orientation (north/south)
+  * coordinates (latitude/longitude)
+ Do the same for Denmark as well.
+```{r, message = FALSE, warning = FALSE}
+# ////////////////////////////////////////////////////////////
+#                      YOUR CODE HERE
+# ///////////////////////////////////////////////////////////
+```
+  
+# Exercise 4: even more details
+
+Augment your Kenya plot by adding a point for the capital, Nairobi, and 3 other major cities: Mumbase, Nakuru, Ruiru.
+
+You might have to do a bit of googling to get the coordinates :)
+
+```{r, message = FALSE, warning = FALSE}
+# ////////////////////////////////////////////////////////////
+#                      YOUR CODE HERE
+# ///////////////////////////////////////////////////////////
+```
+
+# Exercise 5: Thematic maps
+
+*Warning!* You might have to delete your current environment before doing this exercise and/or do it on a separate R script.
+
+
+Let's first load the "World" data and visualise the first lines
+```{r, message = FALSE, warning = FALSE}
+# ////////////////////////////////////////////////////////////
+#                      YOUR CODE HERE
+# ///////////////////////////////////////////////////////////
+```
+
+Now, plot the population of each country on a world map. Make it interactive!
+
+```{r, message = FALSE, warning = FALSE}
+# ////////////////////////////////////////////////////////////
+#                      YOUR CODE HERE
+# ///////////////////////////////////////////////////////////
+```
+
+# Exercise 6: adding more layers
+
+Load data about rivers, land, and major metropolitan areas.
+
+Start with a plot of all land in terms of elevation, then add country borders and finally the locations of the major metropolitan areas.
+
+```{r, message = FALSE, warning = FALSE}
+# ////////////////////////////////////////////////////////////
+#                      YOUR CODE HERE
+# ///////////////////////////////////////////////////////////
+```
+
+# Exercise 7: this time for Africa
+
+Let's dive back into Africa. Plot the life expectancy in African countries
+
+```{r, message = FALSE, warning = FALSE}
+# ////////////////////////////////////////////////////////////
+#                      YOUR CODE HERE
+# ///////////////////////////////////////////////////////////
+```
+
+# Exercise 8: your turn!
+
+Have a look at the columns in the ```africa``` dataset. Try to plot a few variables individually on the map.
+
+You can also try to use ```tm_facets``` to plot several variables simultaneously
+
+```{r, message = FALSE, warning = FALSE}
+# ////////////////////////////////////////////////////////////
+#                      YOUR CODE HERE
+# ///////////////////////////////////////////////////////////
+```

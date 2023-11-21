@@ -1,0 +1,221 @@
+---
+title: "Day 3: Networks and maps"
+output: html_document
+---
+
+# Potentially useful libraries and starter code
+```{r, message = FALSE, warning = FALSE}
+# install.packages("devtools")
+# devtools::install_github("ropensci/rnaturalearthhires")
+
+library(ggplot2) # general purpose plotting
+library(ggspatial) # scale bars and north arrows
+library(rnaturalearth) # map data
+library(rnaturalearthdata)# map data
+# library(rnaturalearthhires)# map data 
+library(sf) #'simple features' package
+library(tmap) # interactive map
+```
+
+# Execise 1: plot the world
+
+Use the rnaturalearth and ggplot2 libraries to get the country outlines on a world map
+
+```{r, message = FALSE, warning = FALSE, name = "Ex1"}
+# We use the rnaturalearth library to get the countries
+world_rne <- ne_countries(
+  scale="medium", # map scale
+  returnclass = "sf" # return a Simple Features dataframe
+)
+
+# We use geom_sf from ggplot to draw simple boundaries and outlines
+ggplot(data = world_rne) +
+  geom_sf() # geom to visualise sf objects
+```
+
+# Exercise 2: plot countries and continents
+
+Do 4 different plots for the maps of:
+ * 1. Kenya
+ * 2. Denmark
+ * 3. Europe
+ * 4. Asia
+
+```{r, message = FALSE, warning = FALSE, name = "Ex2"}
+# Use ne_countries to get natural earth world country polygons
+kenya <- ne_countries(
+  country="kenya", # country name
+  type="countries", # country type
+  scale='large',
+  returnclass = "sf"
+)
+
+# Plot Kenya
+kenya_map <- ggplot(data = kenya) +
+  geom_sf()
+
+kenya_map
+```
+ 
+# Exercise 3: adding details
+
+For the Kenya map, add:
+  * the scale
+  * the orientation (north/south)
+  * coordinates (latitude/longitude)
+
+```{r, message = FALSE, warning = FALSE, name = "Ex3"}
+kenya_map_detailed <- kenya_map +
+  # Add labels
+  labs(
+    x = "Longitude",
+    y = "Latitude",
+    title = "Kenya"
+  ) +
+  # Add the scale on the bottom left
+  annotation_scale(location = "bl", width_hint = 0.4) +
+  # Add a north arrow on the bottom left (bl)
+  annotation_north_arrow(
+    location = "bl", 
+    which_north = "true", 
+    pad_x = unit(0.0, "in"), 
+    pad_y = unit(0.2, "in"),
+    style = north_arrow_fancy_orienteering
+)
+
+kenya_map_detailed
+```
+  
+# Exercise 4: even more details
+
+Augment your Kenya plot by adding a point for the capital, Nairobi, and 3 other major cities: Mumbase, Nakuru, Ruiru.
+Do the same for Denmark as well.
+You might have to do a bit of googling to get the coordinates :)
+
+```{r, message = FALSE, warning = FALSE, name = "Ex4"}
+# Kenya data for major cities
+kenya_city_data <- data.frame(
+  city_name=c("Nairobi", "Mumbasa", "Nakuru", "Ruiru"),
+  lat=c(-1.2921,-4.0435,-0.3031,-1.1483),
+  lon=c(36.8219,39.6682,36.0800,36.9605)
+)
+
+kenya_map_detailed_with_cities <- kenya_map_detailed +
+  # Add points for each city
+  geom_point(
+    data = kenya_city_data, 
+    mapping = aes(x = lon, y = lat), 
+    colour = "red"
+  ) +
+  # Add annotation text for each city
+  geom_text(
+    data = kenya_city_data, 
+    mapping=aes(x=lon, y=lat, label=city_name), 
+    nudge_y = 0.5, 
+    color="darkblue"
+  )
+
+kenya_map_detailed_with_cities
+```
+
+# Exercise 5: Thematic maps
+
+*Warning!* You might have to delete your current environment before doing this exercise and/or do it on a separate R script.
+
+World is a data.frame with a special column that contains a geometry for each row, in this case polygons.
+```{r, message = FALSE, warning = FALSE, name = "Ex5"}
+# Interactive mode
+tmap_mode("view")
+
+# Load World Data
+data("World")
+
+# Show the first rows
+head("World")
+```
+
+In order to plot it in tmap, you first need to specify it with tm_shape. Layers can be added with the + operator, in this case tm_polygons.
+
+```{r, message = FALSE, warning = FALSE, name = "Ex5p2"}
+# Create a tmap element with tm_shape
+# Draw polygons for the population estimation with tm_polygons
+tm_shape(World) + tm_polygons("pop_est")
+```
+
+ 
+# Exercise 6: adding more layers
+
+Load data about rivers, land, and major metropolitan areas.
+
+Start with a plot of all land in terms of elevation, then add country borders and finally the locations of the major metropolitan areas.
+
+```{r, message = FALSE, warning = FALSE, name = "Ex5p2"}
+# Load data for metros, rivers, and land
+data(World, metro, rivers, land)
+
+# Print the first rows
+
+# Metro has a geometry of style POINT
+print(head(metro))
+
+# Rivers has a geometry of style LINESTRING
+print(head(rivers))
+
+# Land contains spatial data of type "stars", it contains raster data (hint: column refsys)
+print(land)
+```
+
+```{r, message = FALSE, warning = FALSE, name = "Ex5p2"}
+# Plot the elevation from the land data
+tm_shape(land) +
+  tm_raster("elevation", palette = terrain.colors(10)) +
+  # Now plot the borders from the World data
+  tm_shape(World) +
+  tm_borders("white", lwd = .5) +
+  # Plot the country names with 3 letters (iso_a3)
+  tm_text("iso_a3", size = "AREA") +
+  # Plot the metropolotian areas
+  tm_shape(metro) +
+  # Add points, whose size depend on pop2020
+  tm_symbols(col = "red", size = "pop2020", scale = .5) +
+  tm_legend(show = FALSE)
+```
+
+# Exercise 7: this time for Africa
+
+Let's dive back into Africa. Plot the life expectancy in African countries
+
+```{r, message = FALSE, warning = FALSE}
+# Select Africa
+africa <- World[World$continent == "Africa",]
+
+tm_shape(africa) +
+  # Plot life expectancy
+  tm_polygons(col = "life_exp", palette = "BuGn") +
+  # Add title
+  tm_layout(title = "Life Expectancy in Africa")
+```
+
+# Exercise 8: your turn!
+
+Have a look at the columns in the ```africa``` dataset. Try to plot a few variables individually on the map.
+
+You can also try to use ```tm_facets``` to plot several variables simultaneously
+
+
+```{r, message = FALSE, warning = FALSE}
+# Select Africa
+africa <- World[World$continent == "Africa",]
+
+tm_shape(africa) +
+  # Plot economy
+  tm_polygons(col = "gdp_cap_est", palette = "BuGn")
+  # Add title
+  tm_layout(title = "GDP per capita of African countries")
+
+# You can plot several columns at once with tm_facets
+tm_shape(africa) +
+  # Plot economy
+  tm_polygons(col = c("footprint", "gdp_cap_est"), palette = "BuGn") +
+  tm_facets(sync = TRUE, ncol = 2)
+```

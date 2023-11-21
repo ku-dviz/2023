@@ -1,0 +1,138 @@
+---
+title: 'Exercises: Prinicpal Component Analysis (PCA)'
+output:
+  html_document: default
+  pdf_document: default
+date: "2023-09-21"
+---
+
+
+Welcome to the exercise session on Principle Component Analysis. In this class
+we will go through the steps of conducting PCA on a dataset relating to kidney 
+failure. 
+
+We will be using a couple of additional packages that are required to conduct PCA 
+in R. The first is called 'corrr' and is used for running a PCA, and the second is 
+'corrplot', which plots the output of corrr.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(corrr)
+library(corrplot)
+
+library(dplyr)
+library(ggplot2)
+```
+
+First, read in the data and have a look at the columns that are available. 
+
+```{r read data}
+# Read kidney disease data here
+```
+
+Now we need to check whether there are NAs in our data - remember that this can 
+break our analysis if we don't check for it first! 
+
+```{r check NAs}
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+```
+Check which of the variables are categorical and which are continuous - remember
+that we need continuous data for PCA! Extract the columns that correspond to continuous
+data. How many variables do you get?
+
+```{r}
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+  
+  
+```
+Now plot a correlation matrix with your standardised data. For a very simple 
+correlation matrix you can use the cor function from the corrr package and then
+use corrplot, but you could also try creating a correlation matrix in ggplot. 
+
+
+```{r}
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+```
+Now, we can perform the PCA. We can use the command prcomp to perform the PCA on the 
+scaled data. 
+
+
+```{r}
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+```
+
+
+
+We can also use fviz_pca_var to plot the each variable in terms of the principal components. 
+
+
+```{r}
+library(factoextra)
+fviz_pca_var(PCA, col.var = 'black')
+
+```
+
+
+Finally, we can use a cos2 plot to transform the principal components back into our original  
+```{r}
+fviz_cos2(PCA, choice = "var", axes = 1)
+```
+We can also use PCA to predict whether or not a patient will have chronic kidney disease. 
+We split the data into a train set, on which we perform the PCA, and a test set, for which we try to predict whether each patient has chronic kidney disease. 
+
+We can then plot the principal components for each of these patients on a scatter plot, 
+and see whether the patients are separated by their kidney condition. 
+
+```{r}
+# Take the continuous data 
+data_for_prediction <- kidney_data %>% select(X, age:sg, bgr:rbcc)
+# Remove NAs
+data_for_PCA <- data_for_prediction %>%
+  mutate_if(is.character, as.numeric) %>% na.omit()
+# Add the category labels, i.e. does each person have chronic kidney disease
+data_for_PCA$class <- kidney_data %>% filter(X %in% data_for_PCA$X) %>%
+  select(class)
+
+# Split the data into testing and training - choose a random sample from the full 
+# dataset
+train <- data_for_PCA %>% sample_frac(0.70)
+test  <- dplyr::anti_join(data_for_PCA, train, by = 'X')
+
+#Scale the training set and produce a correlation matrix
+
+scale_train <- as.data.frame(scale(train %>% select(age:sg, bgr:rbcc)))
+corr_matrix <- cor(scale_train)
+corrplot(corr_matrix, type = 'lower', method = 'ellipse', order = 'AOE', 
+         tl.srt = 45) 
+
+# Perform the PCA on the scaled training set 
+PCA <- prcomp(scale_train, scale. = TRUE, center = TRUE)
+
+
+scale_test <- as.data.frame(scale(test %>% select(age:sg, bgr:rbcc)))
+pred <- predict(PCA, newdata = scale_test)
+train_df <- as.data.frame(PCA$x[, 1:2])
+train_df$Diagnosis <- unname(unlist(train$class))
+
+# Transform the testing data using the principal components. 
+predict_df <- as.data.frame(pred[, 1:2])
+predict_df$Diagnosis <- unname(unlist(test$class))
+# Plot the results
+scatter <- ggplot(predict_df, aes(x = PC1, y = PC2, color = Diagnosis)) +
+  geom_point() + theme_bw() 
+scatter
+```
+
+
+
+

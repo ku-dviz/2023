@@ -1,0 +1,59 @@
+---
+title: "Day 4: Interactive visualisation"
+output: html_document
+---
+
+# Potentially useful libraries and starter code
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(Hmisc)
+library(plotly)
+
+# European quality of life dataset
+qol <- read.csv("../data/eqls_2007and2011_with_labels.csv")
+
+# DK Energy consumption
+dk_cons <- read.csv("../data/dk_energy_consumption_2021.csv")
+
+head(dk_cons)
+```
+
+# Exercise 0: ggplot to plotly
+
+Take your plot from Day 1/Exercise 3 and make it interactive with plotly!
+```{r}
+# Your code here
+```
+
+# Exercise 1: Sankey diagram
+Do a Sankey diagram to represent the sources and targets of energy consumption in Denmark in 2021.
+
+To do so:
+ * Filter out the entries where the output energy is 0.
+ * Build a data frame of nodes mapped to an integer index.
+ * Build a data frame of links where:
+    * Source = integer node from the previous dataframe (the energy source)
+    * Target = integer node from the previous dataframe (the target sector)
+    * Value = value of energy consumption for that link
+```{r}
+# Your code here
+```
+
+# Exercise 2: building your first Shiny app
+cf. app.R in ```day4```
+
+Build an interactive app to analyse how people in Europe perceive and trust their institutions (using the same old European quality of life dataset).
+
+We already got some work ready for you by:
+ 1. Calculating the ```trust``` column, which tells how much on average the responders _trust_ the different public institutions (e.g., police, parliament...)
+ 2. Calculating the ```quality``` column, which tells how much on average the responders _rate_ the different public institutions (e.g., police, parliament...)
+ 3. Coding the UI side! We put a row with a sidebar, and only one input: a country (which can be selected from the user).
+
+Your task is to plot a scatterplot for any input country with:
+ * x = trust
+ * y = quality
+ * Two x- and two y- intercepts: one for the national averages in red, one for the sample averages in blue (from the dataset)
+
+Pay attention to the _reactive_ parts of your plot, and use plotly for interactive visualisation :)

@@ -1,0 +1,123 @@
+---
+title: "Day 4: Interactive visualisation"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = "C:/KU/Teaching/DataVizCourse/dev/html"
+    )
+  })
+---
+
+# Potentially useful libraries and starter code
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(Hmisc)
+library(plotly)
+
+# European quality of life dataset
+qol <- read.csv("../data/eqls_2007and2011_with_labels.csv")
+
+# DK Energy consumption
+dk_cons <- read.csv("../data/dk_energy_consumption_2021.csv")
+
+head(dk_cons)
+```
+
+# Exercise 0: ggplot to plotly
+
+Take your plot from Day 1/Exercise 3 and make it interactive with plotly!
+```{r}
+summary_work_hours_first_job <- qol %>%
+  select(how_many_hours_work_per_week_in_1st_job, country_name) %>%
+  group_by(country_name) %>%
+  summarise(data = list(smean.cl.boot(cur_data(), conf.int = .95, B = 1000L, na.rm = TRUE))) %>%
+  tidyr::unnest_wider(data)
+
+
+fig <- ggplot(summary_work_hours_first_job, aes(x = Mean, y = reorder(country_name, Mean))) +
+  # geom_bar(stat = "identity", aes(fill = Mean)) +
+  geom_point(aes(color = Mean), size = 3L) +
+  geom_errorbar(aes(xmin = Lower, xmax = Upper, y = country_name)) +
+  scale_fill_distiller(type = "seq", palette = "Blues", direction = 1) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(size = 11L),
+    axis.text.y = element_text(size = 11L)
+  ) +
+  labs(
+    x = "Work hours (Mean +/- 95% CI)",
+    y = "",
+  )
+
+plotly_fig <- ggplotly(fig)
+
+# Display the interactive plot
+plotly_fig
+```
+
+# Exercise 1: Sankey diagram
+Do a Sankey diagram to represent the sources and targets of energy consumption in Denmark in 2021.
+
+To do so:
+ * Filter out the entries where the output energy is 0.
+ * Build a data frame of nodes mapped to an integer index.
+ * Build a data frame of links where:
+    * Source = integer node from the previous dataframe (the energy source)
+    * Target = integer node from the previous dataframe (the target sector)
+    * Value = value of energy consumption for that link
+```{r, fig.height=8}
+nodes <- data.frame(name = unique(c(unique(dk_cons$Source), unique(dk_cons$Sector))))
+
+links <- data.frame(
+  source = match(dk_cons$Source, nodes$name) - 1,
+  target = match(dk_cons$Sector, nodes$name) - 1,
+  value = dk_cons$TJ
+)
+
+links <- subset(links, value != 0)
+
+fig <- plot_ly(
+  type = "sankey",
+  orientation = "h",
+  node = list(
+    pad = 15,
+    thickness = 20,
+    line = list(color = "black", width = 0.5),
+    label = unique(c(dk_cons$Source, dk_cons$Sector))
+  ),
+  link = list(
+    source = links$source,
+    target = links$target,
+    value = links$value
+  )
+)
+
+fig <- fig %>% layout(
+  title = "DK Energy Consumption (2021; in TJ)",
+  font = list(
+    size = 14
+  )
+)
+
+fig
+```
+
+# Exercise 2: building your first Shiny app
+cf. app.R in ```day4```
+
+Build an interactive app to analyse how people in Europe perceive and trust their institutions (using the same old European quality of life dataset).
+
+We already got some work ready for you by:
+ 1. Calculating the ```trust``` column, which tells how much on average the responders _trust_ the different public institutions (e.g., police, parliament...)
+ 2. Calculating the ```quality``` column, which tells how much on average the responders _rate_ the different public institutions (e.g., police, parliament...)
+ 3. Coding the UI side! We put a row with a sidebar, and only one input: a country (which can be selected from the user).
+
+Your task is to plot a scatterplot for any input country with:
+ * x = trust
+ * y = quality
+ * Two x- and two y- intercepts: one for the national averages in red, one for the sample averages in blue (from the dataset)
+
+Pay attention to the _reactive_ parts of your plot, and use plotly for interactive visualisation :)

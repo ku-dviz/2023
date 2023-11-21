@@ -1,0 +1,265 @@
+---
+title: "Day 1 Exercises - Data Visualisation Fundamentals"
+output:
+  pdf_document: default
+  html_document: default
+date: "2023-09-19"
+---
+Welcome to the first exercise session for the course Data Visualisation and Storytelling! 
+
+This exercise sheet covers material from the first day of lectures. We will be using two datasets, one from Statistics Denmark (DST) exploring age groups and populations of residents in Denmark, and the European Quality of Life Survey (EQLS). 
+
+Some of the questions have specific tasks for you to do, others are more open-ended, and you can have a go at them in any order you like.
+
+
+```{r setup, include=FALSE}
+# This chunk of code sets up how the output should be displayed - feel free to ignore this! 
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+# Preliminaries
+
+First, set your working directory. 
+
+Then, load the libraries that you will be using - these should include dplyr and ggplot2!
+Don't forget to install these packages first, using install.packages() if they are not already
+installed.
+
+```{r prelim}
+# Include your directory here!
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(Hmisc)
+```
+
+# Exercise 1: Univariate Plots
+For this exercise we will use the "dk_pop" dataset extracted from [DST](https://www.dst.dk/en/Statistik/emner/borgere/befolkning/befolkningstal).
+
+The dataset contains the population of different age groups + the total population in all postcodes in Denmark.
+
+We will ignore the different age groups here and just focus on the total population living in each postcode.
+
+1. Start by plotting the most basic histogram (fig1).
+
+What do you notice about the distribution?
+
+2. Propose another plot (fig2) that incorporates the following elements:
+  - A better way to visualise the median population size in Danish towns
+  - A red, dashed, vertical line that corresponds to this median
+  - Better data-to-ink-ratio: opt for a white background, dashed grid lines, and remove the top and right borders
+  - Increase the font size of the x and y ticks to 11
+
+Plot the two figures (fig1 and fig2) side by side.
+```{r, exercise1, message = FALSE, warning = FALSE}
+# Read in the data
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# Produce a histogram
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# Produce an alternative plot
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+```
+
+# Exercise 2: scatter plots and regression
+
+Plot a simple scatter plot (fig1) showing the following:
+ * x-axis: the proportion of inhabitants
+ * y-axis: total population
+ * data: postcodes for which the population is greater or equal than 10000
+
+Augment this plot (fig2) with:
+ * A linear regression model fit, coloured in dark red
+ * A similar theme as Ex. 1
+ * Title: R^2 coefficient (centered)
+ * Rename the x and y axes with more suitable labels
+
+Plot the two figures (fig1 and fig2) side by side.
+```{r, scatter plots, message = FALSE, warning = FALSE, fig.height = 4, fig.width = 8}
+# People in dense postcodes - read in the data
+
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# Proportion of age between 20-29
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# Run the linear model
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# Create figures
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+```
+
+# Exercise 3: Exploring the European Quality of Life Dataset
+
+Read in the Quality of Life Survey Dataset and answer the following questions:
+
+```{r read_data}
+
+# Read in the data 
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# How many variables are there in the data? And how many observations?
+# Create variables called n_variables and n_observations for your answers.
+
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+
+print(paste("There are ", as.character(n_variables), " variables in the data"))
+print(paste("There are", as.character(n_observations), "observations in the data"))
+
+# How many countries are considered in the dataset? Create a variable called 
+# n_countries for your answer.
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+print(paste("There are", as.character(n_countries), "countries in the data"))
+
+# How many eqls waves are in the dataset? Create separate dataframes 
+# corresponding to each wave of the survey. Each wave corresponds to a year that 
+# the survey was conducted in. 
+
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# Is the number of countries in each wave the same?
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# What is the mean number of children that participants had in 2007? How about in 2011?
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+```
+
+Have a play around with the data to see what kinds of variables exist. You could use the summary() function to get an idea of the values for each response, or use filter() or select() in dplyr to extract subsets of the data. 
+
+```{r play around with data}
+ # Have a play around! 
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+```
+
+
+# Exercise 4: EQLS survey - single country
+Now choose a single country to work with, at least for the time being. Choose some variables and produce plots using ggplot2 to study the associations between two different repsonses. Choose two responses from the columns the dataframe. You can use the file eqls_2007and2011_ukda_data_dictionary.rtf as a dictionary to find out a bit more about what these variables mean. 
+
+Try using different kinds of plots as well, e.g. histograms/density plots, heatmaps, violin plots, or experiment with other plots available in ggplot.  
+
+
+```{r single country, echo=FALSE}
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+```
+
+Now produce a plot that compares the repsonses to a single question across different years of the survey in one country. You can choose a different response to the ones that you chose for the previous question. How have the responses changed between 2007 and 2011?
+
+```{r density}
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+```
+
+# Exercise 5: EQLS survey - multiple countries:
+Now, investigate the responses to a single question from a group of different countries. For example, you could look at self-reported health in a few Nordic countries (the corresponding column for self reported health is health_condition)
+
+```{r violin}
+# Data from a group of countries
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# Produce plots
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+```
+
+# Exercise 6: EQLS survey - all countries:
+
+Now we will compare responses across all countries included in the survey. Draw a bar plot of the average number of work hours in the 1st job for each country.
+
+* Sort the bars by their value in descending order
+* Include error bars to represent uncertainty, e.g., standard deviation or 95% bootstrapped confidence intervals (hint: use the geom_errorbar() function added in as a layer to your ggplot)
+* Add a sequential palette such that higher (resp. lower) work hours are coloured with a lighter (resp. darker) colour
+
+
+Optional: bars take a lot of (unnecessary?) ink. How can you optimise the data-to-ink ratio here?
+
+```{r, all countries, message = FALSE, warning = FALSE, fig.height = 10}
+
+# Create summary of numbers of hours worked in each country using dplyr
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# Create bar plot
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+
+# Create alternative plot, improving the data-to-ink ratio
+
+  # ////////////////////////////////////////////////////////////
+  #                      YOUR CODE HERE
+  # ////////////////////////////////////////////////////////////
+```
+
+
