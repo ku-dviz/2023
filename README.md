@@ -2,11 +2,10 @@
 
 Materials for the "Data visualization and storytelling" PhD course, Fall 2023, University of Copenhagen
 
-Teachers: Kaustubh Chakradeo, Jacob Curran-Sebastian, Neil Scheidwasser
+Teachers: Kaustubh Chakradeo, Jacob Curran-Sebastian, Neil Scheidwasser, Samir Bhatt
 
 ## Setup
 ### Install R:
-* What? A programming a language for statistical computing and graphics
 * Download:
     * Windows: https://cran.r-project.org/bin/windows/base/R-4.3.1-win.exe
     * Mac (arm64; M1/M2 Macs): https://cran.r-project.org/bin/macosx/big-sur-arm64/base/R-4.3.1-arm64.pkg
@@ -17,16 +16,13 @@ Teachers: Kaustubh Chakradeo, Jacob Curran-Sebastian, Neil Scheidwasser
 
 
 ### Install RStudio:
-* What? An integrated development environment (IDE) for R.
 * Go to the RStudio website: https://posit.co/download/rstudio-desktop/
 * Scroll down and download the appropriate version depending on your OS.
 * Check: open RStudio, and check that the R version is the same as the one you installed
 
 ### Install R Markdown:
-* What? A framework to generate formated documents where text and code can be combined
+* We will use Rmarkdown to generate formated documents where text and code can be combined
 * Installation:
-    * In RStudio, type:
-
 ```R
 install.packages('rmarkdown')
 ```
@@ -36,28 +32,28 @@ install.packages('tinytex')
 tinytex::install_tinytex()
 ```
 
-### Install data viz packages
-A basic setup with lots of packages for scientific computing and data visualisation is easy to install with the ```tidyverse``` package:
+### Data analysis and visualization packages:
+A basic setup with a comprehensive set of packages for scientific computing and data visualisation can be installed via the ```tidyverse``` package:
 
 ```R
 install.packages('tidyverse')
 ```
 
-If you prefer to keep your setup minimal, you can install all the required packages that we will use in this course:
+If you prefer to have a minimal setup, you can install the following packages that we will use in this course:
 Basic data analysis:
 ```R
 install.packages('dplyr')
 install.packages('hmisc')
 ```
 
-For static visualisation
+For static visualisation:
 ```R
 install.packages('ggplot2')
 install.packages('ggmap') # Maps
 install.packages('daggity') # Networks
 install.packages('pheatmap') # Heatmaps
 install.packages('gridExtra') # Subplots
-install.packages('RColorBrewer') # More colours!
+install.packages('RColorBrewer') # More colours
 ```
 
 For interactive visualisation:
