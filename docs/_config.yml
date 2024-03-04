@@ -3,8 +3,8 @@ course_name: Data Visualization and Storytelling
 course_description: "Basic principles and practical skills in data visualization to systematically derive valuable insights from data."
 course_semester: "Spring 2024"
 
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://ku-dviz.github.io/" # the base hostname & protocol for your site
+baseurl: "/dvizcourse" # the subpath of your site, e.g. /blog/
+url: "https://mlgh.net" # the base hostname & protocol for your site
 repository: MLGlobalHealth/dviz_course
 
 schoolname: "University of Copenhagen"
