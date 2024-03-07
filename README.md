@@ -43,7 +43,7 @@ If you prefer to have a minimal setup, you can install the following packages th
 Basic data analysis:
 ```R
 install.packages('dplyr')
-install.packages('hmisc')
+install.packages('Hmisc')
 ```
 
 For static visualisation:
