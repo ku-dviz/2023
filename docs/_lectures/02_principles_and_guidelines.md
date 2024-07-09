@@ -1,6 +1,6 @@
 ---
 type: lecture
-date: 2024-05-01T11:00:00+1:00
+date: 2023-09-19T9:00:00
 title: Principles and guidelines
 tldr: "Principles and best practices for 'graphical excellence'."
 thumbnail: /static_files/presentations/lec.jpg

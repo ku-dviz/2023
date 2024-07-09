@@ -1,6 +1,6 @@
 ---
 type: lecture
-date: 2024-05-01T13:00:00+1:00
+date: 2023-09-19T11:00:00
 title: Good and bad data visualisation
 tldr: "Discussing some good (and bad) plots."
 thumbnail: /static_files/presentations/lec.jpg

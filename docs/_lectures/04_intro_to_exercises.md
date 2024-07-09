@@ -1,6 +1,6 @@
 ---
 type: lecture
-date: 2024-05-01T14:00:00+1:00
+date: 2023-09-19T12:00:00
 title: Introduction to the exercises
 tldr: "Introduction to the exercises."
 thumbnail: /static_files/presentations/lec.jpg

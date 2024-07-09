@@ -1,6 +1,6 @@
 ---
 type: lecture
-date: 2024-05-01T10:00:00+1:00
+date: 2023-09-19T07:00:00
 title: Introduction
 tldr: "Introduction and basic plots."
 thumbnail: /static_files/presentations/lec.jpg
