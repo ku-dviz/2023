@@ -4,8 +4,8 @@ course_description: "Basic principles and practical skills in data visualization
 course_semester: "Spring 2023"
 
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "https://ku-dvizcourse.github.io" # the base hostname & protocol for your site
-repository: ku-dviz/2023
+url: "https://ku-dviz.github.io" # the base hostname & protocol for your site
+# repository: ku-dviz/2023
 
 schoolname: "University of Copenhagen"
 schoolurl: "https://ifsv.ku.dk/"
