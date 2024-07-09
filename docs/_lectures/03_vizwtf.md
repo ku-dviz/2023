@@ -13,4 +13,5 @@ thumbnail: /static_files/presentations/lec.jpg
 #       name: slides
 ---
 **Materials:**
-- [Slides](https://github.com/MLGlobalHealth/dviz_course/blob/main/Lectures/Lectures/Day1/day1_part3_vizwtf.pptx)
+
+- [Slides](https://github.com/ku-dviz/2023/blob/main/Lectures/Lectures/Day1/day1_part3_vizwtf.pptx)
